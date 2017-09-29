@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Adalia Fundamentals
 // @namespace    https://gist.github.com/adaliabooks/
-// @version      1.8.4
+// @version      2.0.0
 // @description  A package of fixes, new features and changes to improve GoG.com. I fix GoG, so you don't have to!
 // @author       adaliabooks
-// @updateURL    https://gist.github.com/adaliabooks/bf3cbdbb56db6c107dd8/raw/
-// @downloadURL  https://gist.github.com/adaliabooks/bf3cbdbb56db6c107dd8/raw/
+// @updateURL    https://github.com/adaliabooks/adalia-fundamentals/raw/development/adalia-fundamentals.meta.js
+// @downloadURL  https://github.com/adaliabooks/adalia-fundamentals/raw/development/adalia-fundamentals.user.js
 // @include      http://www.gog.com/*
 // @include      https://www.gog.com/*
 // @include      http://chat.gog.com/*
@@ -41,6 +41,11 @@ function DOM_ContentReady () {
     });
 }
 
+var af-forumFunctions = true;
+var af-accountFunctions = true;
+var af-gamePageFunctions = true;
+var af-chatFunctions = true;
+
 var palemoon = false;
 
 if ((typeof cloneInto != 'undefined') && (typeof cloneInto == 'function')){
@@ -66,7 +71,7 @@ if ((typeof exportFunction != 'undefined') && (typeof exportFunction == 'functio
     palemoon = true;
 }
 
-var version = "1.8.4";
+var version = "2.0.0";
 
 var debugLogger = {
     log: "",
@@ -1796,6 +1801,31 @@ function parseDate(dateString)
 // End of Utility Functions
 
 if (window.top === window.self) {
+	
+	if (af-forumFunctions == true && af-accountFunctions == true && af-gamePageFunctions == true && af-chatFunctions == true)
+	{
+		$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-all-functions.js");
+	}
+	else
+	{
+		if (af-forumFunctions == true)
+		{
+			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-forum.js");
+		}
+		if (af-accountFunctions == true)
+		{
+			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-account.js");
+		}
+		if (af-gamePageFunctions == true)
+		{
+			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-game-page.js");
+		}
+		if (af-chatFunctions == true)
+		{
+			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
+		}
+	}
+	
     $( document ).ready(function() {
         try {
             settings.initialise(config, function() {
