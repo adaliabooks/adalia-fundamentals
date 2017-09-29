@@ -4,8 +4,8 @@
 // @version      1.8.4
 // @description  A package of fixes, new features and changes to improve GoG.com. I fix GoG, so you don't have to!
 // @author       adaliabooks
-// @updateURL    https://gist.github.com/adaliabooks/bf3cbdbb56db6c107dd8/raw/
-// @downloadURL  https://gist.github.com/adaliabooks/bf3cbdbb56db6c107dd8/raw/
+// @updateURL    https://github.com/adaliabooks/adalia-fundamentals/raw/master/adalia-fundamentals.meta.js
+// @downloadURL  https://github.com/adaliabooks/adalia-fundamentals/raw/master/adalia-fundamentals.user.js
 // @include      http://www.gog.com/*
 // @include      https://www.gog.com/*
 // @include      http://chat.gog.com/*
