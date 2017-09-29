@@ -41,10 +41,10 @@ function DOM_ContentReady () {
     });
 }
 
-var af-forumFunctions = true;
-var af-accountFunctions = true;
-var af-gamePageFunctions = true;
-var af-chatFunctions = true;
+var afforumFunctions = true;
+var afaccountFunctions = true;
+var afgamePageFunctions = true;
+var afchatFunctions = true;
 
 var palemoon = false;
 
@@ -1798,34 +1798,91 @@ function parseDate(dateString)
         return new Date(year, month, day);
     }
 }
+
+$.whenAll = function( firstParam ) {
+    var args = arguments,
+        sliceDeferred = [].slice,
+        i = 0,
+        length = args.length,
+        count = length,
+        rejected,
+        deferred = length <= 1 && firstParam && jQuery.isFunction( firstParam.promise )
+            ? firstParam
+            : jQuery.Deferred();
+
+    function resolveFunc( i, reject ) {
+        return function( value ) {
+            rejected = true;
+            args[ i ] = arguments.length > 1 ? sliceDeferred.call( arguments, 0 ) : value;
+            if ( !( --count ) ) {
+                // Strange bug in FF4:
+                // Values changed onto the arguments object sometimes end up as undefined values
+                // outside the $.when method. Cloning the object into a fresh array solves the issue
+                var fn = rejected ? deferred.rejectWith : deferred.resolveWith;
+                fn.call(deferred, deferred, sliceDeferred.call( args, 0 ));
+            }
+        };
+    }
+
+    if ( length > 1 ) {
+        for( ; i < length; i++ ) {
+            if ( args[ i ] && jQuery.isFunction( args[ i ].promise ) ) {
+                args[ i ].promise().then( resolveFunc(i), resolveFunc(i, true) );
+            } else {
+                --count;
+            }
+        }
+        if ( !count ) {
+            deferred.resolveWith( deferred, args );
+        }
+    } else if ( deferred !== firstParam ) {
+        deferred.resolveWith( deferred, length ? [ firstParam ] : [] );
+    }
+    return deferred.promise();
+};
+
+jQuery.cachedScript = function( url, options ) {
+
+  // Allow user to set any option except for dataType, cache, and url
+  options = $.extend( options || {}, {
+    dataType: "script",
+    cache: true,
+    url: url
+  });
+
+  // Use $.ajax() since it is more flexible than $.getScript
+  // Return the jqXHR object so we can chain callbacks
+  return jQuery.ajax( options );
+};
+
 // End of Utility Functions
 
 if (window.top === window.self) {
-	
-	if (af-forumFunctions == true && af-accountFunctions == true && af-gamePageFunctions == true && af-chatFunctions == true)
+	if (afforumFunctions == true && afaccountFunctions == true && afgamePageFunctions == true && afchatFunctions == true)
 	{
-		$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-all-functions.js");
+        var allFunctions = $.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-all-functions.js", function( data, textStatus, jqxhr ) {
+            console.log( "Load was performed." );
+        });
 	}
 	else
 	{
-		if (af-forumFunctions == true)
+		if (afforumFunctions == true)
 		{
-			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-forum.js");
+			$.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-forum.js");
 		}
-		if (af-accountFunctions == true)
+		if (afaccountFunctions == true)
 		{
-			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-account.js");
+			$.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-account.js");
 		}
-		if (af-gamePageFunctions == true)
+		if (afgamePageFunctions == true)
 		{
-			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-game-page.js");
+			$.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-game-page.js");
 		}
-		if (af-chatFunctions == true)
+		if (afchatFunctions == true)
 		{
-			$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
+			$.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
 		}
 	}
-	
     $( document ).ready(function() {
         try {
             settings.initialise(config, function() {
@@ -1848,7 +1905,7 @@ if (window.top === window.self) {
                 }
 
                 // Forum
-                if (GetFirstPartOfDirectory(path) == "forum" && af-forumFunctions == true)
+                if (GetFirstPartOfDirectory(path) == "forum" && afforumFunctions == true)
                 {
                     debugLogger.debugLog("Forum");
                     if (GetLastPartOfDirectory(path) == "forum")
@@ -1872,7 +1929,7 @@ if (window.top === window.self) {
                 }
 
                 // Catalogue
-                if (GetFirstPartOfDirectory(path) == "games" && af-gamePageFunctions == true)
+                if (GetFirstPartOfDirectory(path) == "games" && afgamePageFunctions == true)
                 {
                     setTimeout(function() {
                         markOwnedGames("catalogue");
@@ -1881,7 +1938,7 @@ if (window.top === window.self) {
                 }
 
                 // Game Page
-                if (GetFirstPartOfDirectory(path) == "game" && af-gamePageFunctions == true)
+                if (GetFirstPartOfDirectory(path) == "game" && afgamePageFunctions == true)
                 {
                     debugLogger.debugLog("Game Page");
                     setTimeout(loadReviewFilter, 1);
@@ -1893,7 +1950,7 @@ if (window.top === window.self) {
                 }
 
                 // Account
-                if (GetFirstPartOfDirectory(path) == "account" && af-accountFunctions == true)
+                if (GetFirstPartOfDirectory(path) == "account" && afaccountFunctions == true)
                 {
                     debugLogger.debugLog("Account");
                     $.when($.getJSON( "https://gog.bigpizzapies.com/af_legacy_urls.php?", function(data) {
@@ -1926,7 +1983,7 @@ if (window.top === window.self) {
                         setTimeout(setFriendsSearchJoinDate, 1);
                     }
                 }
-                if (GetFirstPartOfDirectory(path) == "u" && GetLastPartOfDirectory(path) == "wishlist"  && af-accountFunctions == true)
+                if (GetFirstPartOfDirectory(path) == "u" && GetLastPartOfDirectory(path) == "wishlist"  && afaccountFunctions == true)
                 {
                     setTimeout(addPublicWishlistTags, 1);
                     setTimeout(function() {
@@ -1935,7 +1992,7 @@ if (window.top === window.self) {
                     //setTimeout(setPublicWishlistTags, 1);
                     //setTimeout(setPublicWishlistSort, 1);
                 }
-                if (GetLastPartOfDirectory(path) == "chat" && af-chatFunctions == true)
+                if (GetLastPartOfDirectory(path) == "chat" && afchatFunctions == true)
                 {
                     setChatOptionsBar();
                     //setChatRoomSort();
@@ -1958,9 +2015,9 @@ if (window.top === window.self) {
 }
 else
 {
-	if (af-chatFunctions == true)
+	if (afchatFunctions == true)
 	{
-		$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
+		$.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
 		settings.initialise(config, function() {
 			$( document ).ready(function() {
 				var debugEvent = new CustomEvent("debugLog",{ detail: "In iframe"});
