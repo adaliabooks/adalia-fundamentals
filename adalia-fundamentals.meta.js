@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Adalia Fundamentals
-// @namespace    https://gist.github.com/adaliabooks/
+// @namespace    https://github.com/adaliabooks/adalia-fundamentals/
 // @version      2.0.0
 // @description  A package of fixes, new features and changes to improve GoG.com. I fix GoG, so you don't have to!
 // @author       adaliabooks
