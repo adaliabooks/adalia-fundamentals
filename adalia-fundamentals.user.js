@@ -1848,7 +1848,7 @@ if (window.top === window.self) {
                 }
 
                 // Forum
-                if (GetFirstPartOfDirectory(path) == "forum")
+                if (GetFirstPartOfDirectory(path) == "forum" && af-forumFunctions == true)
                 {
                     debugLogger.debugLog("Forum");
                     if (GetLastPartOfDirectory(path) == "forum")
@@ -1872,7 +1872,7 @@ if (window.top === window.self) {
                 }
 
                 // Catalogue
-                if (GetFirstPartOfDirectory(path) == "games")
+                if (GetFirstPartOfDirectory(path) == "games" && af-gamePageFunctions == true)
                 {
                     setTimeout(function() {
                         markOwnedGames("catalogue");
@@ -1881,7 +1881,7 @@ if (window.top === window.self) {
                 }
 
                 // Game Page
-                if (GetFirstPartOfDirectory(path) == "game")
+                if (GetFirstPartOfDirectory(path) == "game" && af-gamePageFunctions == true)
                 {
                     debugLogger.debugLog("Game Page");
                     setTimeout(loadReviewFilter, 1);
@@ -1893,7 +1893,7 @@ if (window.top === window.self) {
                 }
 
                 // Account
-                if (GetFirstPartOfDirectory(path) == "account")
+                if (GetFirstPartOfDirectory(path) == "account" && af-accountFunctions == true)
                 {
                     debugLogger.debugLog("Account");
                     $.when($.getJSON( "https://gog.bigpizzapies.com/af_legacy_urls.php?", function(data) {
@@ -1926,7 +1926,7 @@ if (window.top === window.self) {
                         setTimeout(setFriendsSearchJoinDate, 1);
                     }
                 }
-                if (GetFirstPartOfDirectory(path) == "u" && GetLastPartOfDirectory(path) == "wishlist")
+                if (GetFirstPartOfDirectory(path) == "u" && GetLastPartOfDirectory(path) == "wishlist"  && af-accountFunctions == true)
                 {
                     setTimeout(addPublicWishlistTags, 1);
                     setTimeout(function() {
@@ -1935,7 +1935,7 @@ if (window.top === window.self) {
                     //setTimeout(setPublicWishlistTags, 1);
                     //setTimeout(setPublicWishlistSort, 1);
                 }
-                if (GetLastPartOfDirectory(path) == "chat")
+                if (GetLastPartOfDirectory(path) == "chat" && af-chatFunctions == true)
                 {
                     setChatOptionsBar();
                     //setChatRoomSort();
@@ -1958,17 +1958,21 @@ if (window.top === window.self) {
 }
 else
 {
-    settings.initialise(config, function() {
-        $( document ).ready(function() {
-            var debugEvent = new CustomEvent("debugLog",{ detail: "In iframe"});
-            document.dispatchEvent(debugEvent);
-            var debugEvent = new CustomEvent("debugLog",{ detail: window.location.pathname});
-            document.dispatchEvent(debugEvent);
-            addGlobalStyle('.user-name { text-transform: none; }');
-            setTimeout(function() {
-                //roomsFilterAndSort();
-            }, 10);
-            chatEnterButton();
-        });
-    });
+	if (af-chatFunctions == true)
+	{
+		$.getScript("https://raw.githubusercontent.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
+		settings.initialise(config, function() {
+			$( document ).ready(function() {
+				var debugEvent = new CustomEvent("debugLog",{ detail: "In iframe"});
+				document.dispatchEvent(debugEvent);
+				var debugEvent = new CustomEvent("debugLog",{ detail: window.location.pathname});
+				document.dispatchEvent(debugEvent);
+				addGlobalStyle('.user-name { text-transform: none; }');
+				setTimeout(function() {
+					//roomsFilterAndSort();
+				}, 10);
+				chatEnterButton();
+			});
+		});
+	}
 }
