@@ -1823,7 +1823,6 @@ if (window.top === window.self) {
         url: urlString,
         success: function(data) {
             eval(data);
-            console.log( "Load was performed." );
             $( document ).ready(function() {
                 try {
                     settings.initialise(config, function() {
@@ -1958,21 +1957,25 @@ if (window.top === window.self) {
 }
 else
 {
-	if (afchatFunctions == true)
-	{
-		$.cachedScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
-		settings.initialise(config, function() {
-			$( document ).ready(function() {
-				var debugEvent = new CustomEvent("debugLog",{ detail: "In iframe"});
-				document.dispatchEvent(debugEvent);
-				var debugEvent = new CustomEvent("debugLog",{ detail: window.location.pathname});
-				document.dispatchEvent(debugEvent);
-				addGlobalStyle('.user-name { text-transform: none; }');
-				setTimeout(function() {
-					//roomsFilterAndSort();
-				}, 10);
-				chatEnterButton();
-			});
-		});
-	}
+    if (afchatFunctions == true)
+    {
+        $.ajax({
+            url: "https://gog.bigpizzapies.com/fetch_af_js.php?param[]=chat",
+            success: function(data) {
+                eval(data);
+                settings.initialise(config, function() {
+                    $( document ).ready(function() {
+                        var debugEvent = new CustomEvent("debugLog",{ detail: "In iframe"});
+                        document.dispatchEvent(debugEvent);
+                        var debugEvent = new CustomEvent("debugLog",{ detail: window.location.pathname});
+                        document.dispatchEvent(debugEvent);
+                        addGlobalStyle('.user-name { text-transform: none; }');
+                        setTimeout(function() {
+                            //roomsFilterAndSort();
+                        }, 10);
+                        chatEnterButton();
+                    });
+                });
+            }})
+    }
 }
