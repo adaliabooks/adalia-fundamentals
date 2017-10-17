@@ -1799,225 +1799,162 @@ function parseDate(dateString)
     }
 }
 
-$.whenAll = function( firstParam ) {
-    var args = arguments,
-        sliceDeferred = [].slice,
-        i = 0,
-        length = args.length,
-        count = length,
-        rejected,
-        deferred = length <= 1 && firstParam && jQuery.isFunction( firstParam.promise )
-            ? firstParam
-            : jQuery.Deferred();
-
-    function resolveFunc( i, reject ) {
-        return function( value ) {
-            rejected = true;
-            args[ i ] = arguments.length > 1 ? sliceDeferred.call( arguments, 0 ) : value;
-            if ( !( --count ) ) {
-                // Strange bug in FF4:
-                // Values changed onto the arguments object sometimes end up as undefined values
-                // outside the $.when method. Cloning the object into a fresh array solves the issue
-                var fn = rejected ? deferred.rejectWith : deferred.resolveWith;
-                fn.call(deferred, deferred, sliceDeferred.call( args, 0 ));
-            }
-        };
-    }
-
-    if ( length > 1 ) {
-        for( ; i < length; i++ ) {
-            if ( args[ i ] && jQuery.isFunction( args[ i ].promise ) ) {
-                args[ i ].promise().then( resolveFunc(i), resolveFunc(i, true) );
-            } else {
-                --count;
-            }
-        }
-        if ( !count ) {
-            deferred.resolveWith( deferred, args );
-        }
-    } else if ( deferred !== firstParam ) {
-        deferred.resolveWith( deferred, length ? [ firstParam ] : [] );
-    }
-    return deferred.promise();
-};
-
-jQuery.cachedScript = function( url, options ) {
-
-  // Allow user to set any option except for dataType, cache, and url
-  options = $.extend( options || {}, {
-    dataType: "script",
-    cache: true,
-    url: url
-  });
-
-  // Use $.ajax() since it is more flexible than $.getScript
-  // Return the jqXHR object so we can chain callbacks
-  return jQuery.ajax( options );
-};
-
 // End of Utility Functions
 
 if (window.top === window.self) {
-    var allFunctionsPromise = true;
-    var forumPromise = true;
-    var accountPromise = true;
-    var gamePagePromise = true;
-    var chatPromise = true;
-	if (afforumFunctions == true && afaccountFunctions == true && afgamePageFunctions == true && afchatFunctions == true)
-	{
-        allFunctionsPromise = $.getScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-all-functions.js");
-	}
-	else
-	{
-		if (afforumFunctions == true)
-		{
-			forumPromise = $.getScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-forum.js");
-		}
-		if (afaccountFunctions == true)
-		{
-			accountPromise = $.getScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-account.js");
-		}
-		if (afgamePageFunctions == true)
-		{
-			gamePagePromise = $.getScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-game-page.js");
-		}
-		if (afchatFunctions == true)
-		{
-			chatPromise = $.getScript("https://rawgit.com/adaliabooks/adalia-fundamentals/development/af-chat.js");
-		}
-	}
-    $.when(allFunctionsPromise/*, forumPromise, accountPromise, gamePagePromise, chatPromise*/).then(function() {
-        console.log( "Load was performed." );
-        $( document ).ready(function() {
-            try {
-                settings.initialise(config, function() {
+    urlString = "https://gog.bigpizzapies.com/fetch_af_js.php?"
+    if (afforumFunctions == true)
+    {
+        urlString = urlString += "param[]=forum&";
+    }
+    if (afaccountFunctions == true)
+    {
+        urlString = urlString += "param[]=account&";
+    }
+    if (afgamePageFunctions == true)
+    {
+        urlString = urlString += "param[]=gamepage&";
+    }
+    if (afchatFunctions == true)
+    {
+        urlString = urlString += "param[]=chat";
+    }
+    $.ajax({
+        url: urlString,
+        success: function(data) {
+            eval(data);
+            console.log( "Load was performed." );
+            $( document ).ready(function() {
+                try {
+                    settings.initialise(config, function() {
 
-                    feature_AF_style();
+                        feature_AF_style();
 
-                    // navbar
-                    feature_add_fundamentals_link();
-                    //syncWishlistPriorityData();
-                    setWishlistSync();
-                    setCurrencySymbol();
+                        // navbar
+                        feature_add_fundamentals_link();
+                        //syncWishlistPriorityData();
+                        setWishlistSync();
+                        setCurrencySymbol();
 
-                    debugLogger.debugLog("Features Loaded");
+                        debugLogger.debugLog("Features Loaded");
 
-                    var path = window.location.pathname;
-                    debugLogger.debugLog(path);
+                        var path = window.location.pathname;
+                        debugLogger.debugLog(path);
 
-                    // 404
-                    if (document.title == "404 - Page not found - GOG.com") {
-                    }
+                        // 404
+                        if (document.title == "404 - Page not found - GOG.com") {
+                        }
 
-                    // Forum
-                    if (GetFirstPartOfDirectory(path) == "forum" && afforumFunctions == true)
-                    {
-                        debugLogger.debugLog("Forum");
-                        if (GetLastPartOfDirectory(path) == "forum")
+                        // Forum
+                        if (GetFirstPartOfDirectory(path) == "forum" && afforumFunctions == true)
+                        {
+                            debugLogger.debugLog("Forum");
+                            if (GetLastPartOfDirectory(path) == "forum")
+                            {
+                                setTimeout(function() {
+                                    setLanguageForums();
+                                    sortGameForums();
+                                    setCommunityWishlist();
+                                    setFavouriteTopic();
+                                    setParticipatedTopic();
+                                    setHotTopic();
+                                    setAllHide();
+                                }, 100);
+                            }
+                            enableSearchBar();
+                            if (GetLastPartOfDirectory(path) != "myrecentposts")
+                            {
+                                setFavouritesHide();
+                                setFavouritesToggle();
+                            }
+                        }
+
+                        // Catalogue
+                        if (GetFirstPartOfDirectory(path) == "games" && afgamePageFunctions == true)
                         {
                             setTimeout(function() {
-                                setLanguageForums();
-                                sortGameForums();
-                                setCommunityWishlist();
-                                setFavouriteTopic();
-                                setParticipatedTopic();
-                                setHotTopic();
-                                setAllHide();
-                            }, 100);
+                                markOwnedGames("catalogue");
+                                setHideToolTip();
+                            }, 1);
                         }
-                        enableSearchBar();
-                        if (GetLastPartOfDirectory(path) != "myrecentposts")
+
+                        // Game Page
+                        if (GetFirstPartOfDirectory(path) == "game" && afgamePageFunctions == true)
                         {
-                            setFavouritesHide();
-                            setFavouritesToggle();
+                            debugLogger.debugLog("Game Page");
+                            setTimeout(loadReviewFilter, 1);
+                            setTimeout(setReviewsPerPageDropdown, 1);
+                            setTimeout(setSortOrderDropdown, 1);
+                            setTimeout(setSortOrder2Dropdown, 1);
+                            gamePageMaGoGLink();
+                            gamePageChangelogLinks();
                         }
-                    }
 
-                    // Catalogue
-                    if (GetFirstPartOfDirectory(path) == "games" && afgamePageFunctions == true)
-                    {
-                        setTimeout(function() {
-                            markOwnedGames("catalogue");
-                            setHideToolTip();
-                        }, 1);
-                    }
-
-                    // Game Page
-                    if (GetFirstPartOfDirectory(path) == "game" && afgamePageFunctions == true)
-                    {
-                        debugLogger.debugLog("Game Page");
-                        setTimeout(loadReviewFilter, 1);
-                        setTimeout(setReviewsPerPageDropdown, 1);
-                        setTimeout(setSortOrderDropdown, 1);
-                        setTimeout(setSortOrder2Dropdown, 1);
-                        gamePageMaGoGLink();
-                        gamePageChangelogLinks();
-                    }
-
-                    // Account
-                    if (GetFirstPartOfDirectory(path) == "account" && afaccountFunctions == true)
-                    {
-                        debugLogger.debugLog("Account");
-                        $.when($.getJSON( "https://gog.bigpizzapies.com/af_legacy_urls.php?", function(data) {
-                            unsafeWindow.legacyUrls    = cloneInto (data, unsafeWindow);
-                        }), $.getJSON( "https://gog.bigpizzapies.com/lastUpdatedIdList.json?", function(data) {
-                            unsafeWindow.updatedList    = cloneInto (data, unsafeWindow);
-                        }))
-                            .always(function(data)
-                                    {
-                            setTimeout(changeDownloadLinks, 100);
-                            setTimeout(setDownloadOptions, 100);
-                            setTimeout(setShowUpdateInfo, 100);
-                            setTimeout(gamesPerPageOption, 100);
-                            setTimeout(setGamesPerPage, 100);
-                            setTimeout(setManualSort, 100);
-                            setTimeout(loadLibraryStyleChanger, 100);
-                            setTimeout(setShelfColour, 100);
-                            setTimeout(addTopPagination, 100);
-                            setTimeout(setLibraryProductTotals, 100);
-                            setTimeout(fixLibraryProductTotals, 100);
-                        });
-                        if (GetLastPartOfDirectory(path) == "wishlist")
+                        // Account
+                        if (GetFirstPartOfDirectory(path) == "account" && afaccountFunctions == true)
                         {
-                            setTimeout(addWishlistTags, 1);
-                            setTimeout(setWishlistProductTotals, 1);
-                            setTimeout(fixWishlistProductTotals, 1);
+                            debugLogger.debugLog("Account");
+                            $.when($.getJSON( "https://gog.bigpizzapies.com/af_legacy_urls.php?", function(data) {
+                                unsafeWindow.legacyUrls    = cloneInto (data, unsafeWindow);
+                            }), $.getJSON( "https://gog.bigpizzapies.com/lastUpdatedIdList.json?", function(data) {
+                                unsafeWindow.updatedList    = cloneInto (data, unsafeWindow);
+                            }))
+                                .always(function(data)
+                                        {
+                                setTimeout(changeDownloadLinks, 100);
+                                setTimeout(setDownloadOptions, 100);
+                                setTimeout(setShowUpdateInfo, 100);
+                                setTimeout(gamesPerPageOption, 100);
+                                setTimeout(setGamesPerPage, 100);
+                                setTimeout(setManualSort, 100);
+                                setTimeout(loadLibraryStyleChanger, 100);
+                                setTimeout(setShelfColour, 100);
+                                setTimeout(addTopPagination, 100);
+                                setTimeout(setLibraryProductTotals, 100);
+                                setTimeout(fixLibraryProductTotals, 100);
+                            });
+                            if (GetLastPartOfDirectory(path) == "wishlist")
+                            {
+                                setTimeout(addWishlistTags, 1);
+                                setTimeout(setWishlistProductTotals, 1);
+                                setTimeout(fixWishlistProductTotals, 1);
+                            }
+                            if (GetLastPartOfDirectory(path) == "friends")
+                            {
+                                setTimeout(setFriendsSearchJoinDate, 1);
+                            }
                         }
-                        if (GetLastPartOfDirectory(path) == "friends")
+                        if (GetFirstPartOfDirectory(path) == "u" && GetLastPartOfDirectory(path) == "wishlist"  && afaccountFunctions == true)
                         {
-                            setTimeout(setFriendsSearchJoinDate, 1);
+                            setTimeout(addPublicWishlistTags, 1);
+                            setTimeout(function() {
+                                markOwnedGames("wishlist");
+                            }, 1);
+                            //setTimeout(setPublicWishlistTags, 1);
+                            //setTimeout(setPublicWishlistSort, 1);
                         }
-                    }
-                    if (GetFirstPartOfDirectory(path) == "u" && GetLastPartOfDirectory(path) == "wishlist"  && afaccountFunctions == true)
-                    {
-                        setTimeout(addPublicWishlistTags, 1);
-                        setTimeout(function() {
-                            markOwnedGames("wishlist");
-                        }, 1);
-                        //setTimeout(setPublicWishlistTags, 1);
-                        //setTimeout(setPublicWishlistSort, 1);
-                    }
-                    if (GetLastPartOfDirectory(path) == "chat" && afchatFunctions == true)
-                    {
-                        setChatOptionsBar();
-                        //setChatRoomSort();
-                        setChatEnterToSend();
-                        //setChatRoomNamesFilter();
-                    }
-                })
+                        if (GetLastPartOfDirectory(path) == "chat" && afchatFunctions == true)
+                        {
+                            setChatOptionsBar();
+                            //setChatRoomSort();
+                            setChatEnterToSend();
+                            //setChatRoomNamesFilter();
+                        }
 
-            } catch (exception) { console.error(exception)}
-        });
+                    })
 
-        // check version, and show changelog if new
-        var last_AF_version = GM_getValue('last_AF_version')
-        if (last_AF_version === undefined) last_AF_version = "1.0"
-        else if (cmpVersion(last_AF_version, version) < 0) {
-            debugLogger.debugLog("Update detected, changelog shown");
-            popup.show('Changelog')
+                } catch (exception) { console.error(exception)}
+            });
         }
-        GM_setValue('last_AF_version', version)
     })
+    // check version, and show changelog if new
+    var last_AF_version = GM_getValue('last_AF_version')
+    if (last_AF_version === undefined) last_AF_version = "1.0"
+    else if (cmpVersion(last_AF_version, version) < 0) {
+        debugLogger.debugLog("Update detected, changelog shown");
+        popup.show('Changelog')
+    }
+    GM_setValue('last_AF_version', version)
 }
 else
 {
