@@ -1,5 +1,6 @@
 // Account Page Functions
 
+// Loads the Downloader links page for the current game and scrapes the link to download all the goodies at once, then displays this on the game card
 function loadAllGoodiesDownloadLink()
 {
     var downloadRows = $(".game-details__column--right .rows");
@@ -26,6 +27,7 @@ function loadAllGoodiesDownloadLink()
     }
 }
 
+// Creates a watcher that calls the loadUpdateInfo function any time the "gog-account-product" attribute on .game-details changes
 function changeDownloadLinks()
 {
     debugLogger.debugLog("Change Download Links called");
@@ -62,6 +64,7 @@ function changeDownloadLinks()
         });
 }
 
+// Loads the Classic Installer links by calling Gog's built in function to do so.
 function loadClassicLinks()
 {
     contentEval(function() {
@@ -72,7 +75,7 @@ function loadClassicLinks()
     debugLogger.debugLog("Classic Links Loaded");
 }
 
-
+// Replaces the code for the download items with a new code that checks whether the script's Downloader Links option is on and displays the appropriate links
 function compileNewDownloadLinks()
 {
     if ((GetLastPartOfDirectory(window.location.pathname) == "account") || (GetLastPartOfDirectory(window.location.pathname) == "movies"))
@@ -115,6 +118,7 @@ function compileNewDownloadLinks()
     }
 }
 
+// Creates the button to turn Downloader Links on or off
 function setDownloadOptions()
 {
     debugLogger.debugLog('setDownloadOptions called');
@@ -157,6 +161,7 @@ function setDownloadOptions()
     settings.onchange('library-downloader-links', on_update);
 }
 
+// Creates the label that shows the date the game was last updated and it's current version
 function setShowUpdateInfo()
 {
     debugLogger.debugLog('setShowUpdateInfo called');
@@ -177,6 +182,7 @@ function setShowUpdateInfo()
     settings.onchange('library-show-update-info', on_update);
 }
 
+// Loads the info about games last update and current version number (relies on Galaxy APIs so not always accurate)
 function loadUpdateInfo()
 {
     var accountProductsScope = unsafeWindow.angular.element(document.querySelectorAll('.game-details__title')).scope();
@@ -202,6 +208,7 @@ function loadUpdateInfo()
     debugLogger.debugLog('Update Info Loaded');
 }
 
+// Styles the top pagination based on choice of shelf
 function styleTopPagination()
 {
     if (settings.get('library-style').indexOf("Legacy") == -1)
@@ -219,6 +226,7 @@ function styleTopPagination()
     }
 }
 
+// Adds a pagination element to the top of the page
 function addTopPagination()
 {
     if ((GetLastPartOfDirectory(window.location.pathname) == "account") || (GetLastPartOfDirectory(window.location.pathname) == "movies"))
@@ -261,6 +269,7 @@ function addTopPagination()
     }
 }
 
+// Changes the colour of the legacy shelf
 function setShelfColour() 
 {
     function on_update(value) 
@@ -278,6 +287,7 @@ function setShelfColour()
     settings.onchange('library-shelf-colour', on_update);
 }
 
+// Set up for the library style options in the menu
 function setLibraryStyle() 
 {
     function on_update(value) 
@@ -293,6 +303,7 @@ function setLibraryStyle()
     settings.onchange('library-style', on_update);
 }
 
+// Loads the correct style based on users' choice of library
 function changeLibraryStyle()
 {
     if (GetLastPartOfDirectory(window.location.pathname) == "account")
@@ -381,6 +392,7 @@ function changeLibraryStyle()
     }
 }
 
+// Replaces the base GOG library code with custom HTML / Angular that allows more games per page, manual sorting and different library styles.
 function loadLibraryStyleChanger()
 {
     if (GetLastPartOfDirectory(window.location.pathname) == "account")
@@ -573,6 +585,7 @@ function loadLibraryStyleChanger()
     }
 }
 
+// Sets up the menu option for games per page
 function setGamesPerPage() 
 {
     var firstCall = true;
@@ -597,6 +610,7 @@ function setGamesPerPage()
     settings.onchange('library-games-per-page', on_update);
 }
 
+// Custom code called when the library is loaded to allow more games and different sorting options
 function gamesPerPageOption()
 {
     if (GetLastPartOfDirectory(window.location.pathname) == "account")
@@ -861,6 +875,7 @@ function gamesPerPageOption()
     }
 }
 
+// Sets up the manual sort option in the menu
 function setManualSort()
 {
     var firstCall = true;
@@ -908,6 +923,7 @@ function setManualSort()
     settings.onchange('library-sort', on_update);
 }
 
+// Normalises the sortBy values of games in the manual sort order to remove decimals or duplicate values
 function normaliseManualSortOrder(sortOrder)
 {
     debugLogger.debugLog("Normalise Manual Sort Order");
@@ -939,6 +955,7 @@ function normaliseManualSortOrder(sortOrder)
     GM_setValue('manual_sort_order',JSON.stringify(sortOrder));
 }
 
+// Fetches the manual sort order from the script database or generates a new one from the current sorting if none exists
 function retrieveManualSortOrder()
 {
     debugLogger.debugLog("Retrieve Manual Sort Order");
@@ -965,6 +982,7 @@ function retrieveManualSortOrder()
     return manualSortOrder;
 }
 
+// Adds new games not already listed in the manual sort order to the begininng or end of the list based on user preference
 function addNewGamesToSortOrder(manualSortOrder)
 {
     var libraryScope = unsafeWindow.angular.element(document.querySelectorAll('.list')).scope();
@@ -995,12 +1013,14 @@ function addNewGamesToSortOrder(manualSortOrder)
     }
 }
 
+// Shows the move pop up to allow moving games large distances in the sort order
 function changeSortPopUp(idToMove, title)
 {
     debugLogger.debugLog('Change Sort Pop Up');
     manualSortPopup.show(idToMove, title);
 }
 
+// Moves an id to a new position in the manual sort order
 function changeProductSortOrder(idToMove, newPositionId)
 {
     debugLogger.debugLog("Change Product Sort Order");
@@ -1025,6 +1045,7 @@ function changeProductSortOrder(idToMove, newPositionId)
     $(window).scrollTop(scroll);
 }
 
+//Exports the manual sort order to window scope (for Palemoon)
 function exportManualSort(manualSortOrder)
 {
     unsafeWindow.manualSortOrderJSON = cloneInto (JSON.stringify(manualSortOrder), unsafeWindow);
@@ -1033,6 +1054,7 @@ function exportManualSort(manualSortOrder)
     });
 }
 
+// Sorts the products by the manual sort order
 function manualSortProducts()
 {
     debugLogger.debugLog("Manual Sort Products");
@@ -1090,6 +1112,7 @@ function manualSortProducts()
     debugLogger.debugLog("Manual Sort Done");
 }
 
+// Sorts the products by last updated date
 function lastUpdatedSortProducts()
 {
     debugLogger.debugLog("Last Updated Sort Products");
@@ -1155,6 +1178,7 @@ function lastUpdatedSortProducts()
     debugLogger.debugLog("Last Updated Sort Done");
 }
 
+// Called when manual sort is enabled, allows draging
 function allowManualSort()
 {
     if (GetLastPartOfDirectory(window.location.pathname) == "account")
@@ -1238,6 +1262,7 @@ function allowManualSort()
     }
 }
 
+// Set up for library product totals option
 function setLibraryProductTotals()
 {
     function on_update(value)
@@ -1256,6 +1281,7 @@ function setLibraryProductTotals()
     settings.onchange('library-product-count', on_update);
 }
 
+// Replaces default product totals html with custom code that shows current number of displayed items rather than total library count
 function fixLibraryProductTotals()
 {
     if ((GetLastPartOfDirectory(window.location.pathname) == "account") || (GetLastPartOfDirectory(window.location.pathname) == "movies"))
@@ -1277,6 +1303,7 @@ function fixLibraryProductTotals()
     }
 }
 
+// Set up for wishlist product totals option
 function setWishlistProductTotals()
 {
     function on_update(value)
@@ -1292,6 +1319,7 @@ function setWishlistProductTotals()
     settings.onchange('wishlist-product-count', on_update);
 }
 
+// Replaces default product totals html with custom code that shows current number of displayed items rather than total wishlist count
 function fixWishlistProductTotals()
 {
     contentEval(function() {
@@ -1308,6 +1336,7 @@ function fixWishlistProductTotals()
     $('.collection-header .header__main').replaceWith(unsafeWindow.productCount);
 }
 
+// Sets up the option to show tags on private wishlist
 function setPrivateWishlistTags()
 {
     function on_update(value)
@@ -1327,6 +1356,7 @@ function setPrivateWishlistTags()
     settings.onchange('wishlist-private-tags', on_update);
 }
 
+// Sets up the option to show tags on public wishlist
 function setPublicWishlistTags()
 {
     function on_update(value)
@@ -1346,6 +1376,7 @@ function setPublicWishlistTags()
     settings.onchange('wishlist-public-tags', on_update);
 }
 
+// Sets up the option to sort private wishlist
 function setPrivateWishlistSort()
 {
     function on_update(value)
@@ -1357,6 +1388,7 @@ function setPrivateWishlistSort()
     settings.onchange('wishlist-private-sort', on_update);
 }
 
+// Sets up the option to sort public wishlist
 function setPublicWishlistSort()
 {
     function on_update(value)
@@ -1368,6 +1400,7 @@ function setPublicWishlistSort()
     settings.onchange('wishlist-public-sort', on_update);
 }
 
+// Sets up the wishlist Sync
 function setWishlistSync()
 {
     var firstCall = true;
@@ -1419,6 +1452,7 @@ function setWishlistSync()
     settings.onchange('wishlist-sync', on_update);
 }
 
+// Adds tags and sorting options to private wishlist
 function addWishlistTags()
 {
     //addGlobalStyle('.af-wishlist-tag { font-size: 0.9em; float: right;}');
@@ -1664,6 +1698,7 @@ function addWishlistTags()
     });
 }
 
+// Syncs wishlist data to server
 function syncWishlistPriorityData()
 {
     var wishlistPriorityJSON = GM_getValue('wishlist_priority');
@@ -1704,6 +1739,7 @@ function syncWishlistPriorityData()
     }
 }
 
+// Adds tags and sorting options to public wishlists
 function addPublicWishlistTags()
 {
     addGlobalStyle('.af-wishlist-tag { font-size: 0.9em; float: right;}');
