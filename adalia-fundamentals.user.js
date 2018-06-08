@@ -150,7 +150,7 @@ var config = {
         { type: 'bool', def: true, key: 'forum-favourites-toggle', label: 'Turn on or off the ability to toggle hiding your favourited threads by clicking on the "Favourite Topics" header' },
         { type: 'bool', def: false, key: 'forum-favourites-hide', label: 'Hide your favourited threads (only works if the toggle option is on as well)' },
         { type: 'bool', def: false, key: 'forum-game-forums-sort', label: 'Show the Game Specific Forum Sort button' },
-		{ type: 'multibool', options: { 'English': true, 'Archives': true, 'Brazilian': true, 'German': true, 'French': true, 'Russian': true, 'Chinese': true}, key:'forum-language-forums', label:'Show or hide different language forums on the Community page'},
+		{ type: 'multibool', options: { 'English': true, 'Archives': true, 'Brazilian': true, 'German': true, 'French': true, 'Russian': true, 'Chinese': true, 'Polish': true}, key:'forum-language-forums', label:'Show or hide different language forums on the Community page'},
         { type: 'choice', options: ['show', 'collapse', 'remove'], def: 'show', key: 'forum-community-wishlist', label: 'Option to show, collapse or remove the Community Wishlist section from the Community page' },
         { type: 'choice', options: ['show', 'collapse', 'remove'], def: 'show', key: 'forum-favourite-topics', label: 'Option to show, collapse or remove the Favourite Topics section from the Community page' },
         { type: 'choice', options: ['show', 'collapse', 'remove'], def: 'show', key: 'forum-participated-topics', label: 'Option to show, collapse or remove the Topics I\'ve Participated In section from the Community page' },
@@ -1307,20 +1307,7 @@ function setDebug()
 }
 
 function feature_add_fundamentals_link() {
-    var separator = $('.js-menu-account .menu-submenu-separator.menu-submenu-extension-settings')
-	if (separator.length == 0) {
-		separator = $('<div class="menu-submenu-separator menu-submenu-extension-settings"></div>')
-		separator.insertBefore($('.js-menu-account .menu-submenu-separator').first())
-	}
-
-	$('<a class="menu-submenu-link">').text('Adalia Fundamentals')
-	.appendTo(
-		$('<div class="menu-submenu-item menu-submenu-item--hover">')
-		.insertAfter(separator)
-	)
-	.click(function() { alert("Be aware that the menu item to access the Adalia Fundamentals settings popup can now be found under the About menu.\n\nThe menu item under the Account menu will be removed in the near future - this notice is here so that when the \"Adalia Fundamentals\" item in the Account menu does get removed everybody knows where it went.\n\nSorry for any inconvenience."); popup.show('Changelog') })
-
-	separator = $('.js-menu-about .menu-submenu-separator.menu-submenu-extension-settings')
+    var separator = $('.js-menu-about .menu-submenu-separator.menu-submenu-extension-settings')
 	if (separator.length == 0) {
 		separator = $('<div class="menu-submenu-separator menu-submenu-extension-settings"></div>')
 		separator.insertAfter($('.js-menu-about .menu-submenu-separator').last())
