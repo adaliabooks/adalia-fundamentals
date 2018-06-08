@@ -853,6 +853,7 @@ function setLanguageForums()
         $('#forum_general_fr').toggle(value.French);
         $('#forum_general_ru').toggle(value.Russian);
         $('#forum_general_zh').toggle(value.Chinese);
+        $('#forum_general_pl').toggle(value.Polish);
     }
     settings.onchange('forum-language-forums', on_update);
 }
